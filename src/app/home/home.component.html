@@ -1,0 +1,742 @@
+<!-- Include Header -->
+<app-header></app-header>
+
+<!-- App Store Main Content -->
+<div class="app-store-container">
+  <!-- Loading overlay -->
+  <!-- <div class="loading-overlay" *ngIf="loading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Refreshing app data...</span>
+    </div>
+  </div> -->
+  
+  <!-- Hero Search Section -->
+  <div class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Discover Amazing Apps</h1>
+        <p class="hero-subtitle">Find the perfect apps and games for your needs</p>
+        <div class="search-container">
+          <div class="search-input-wrapper">
+            <i class="search-icon fas fa-search"></i>
+            <input 
+              type="text" 
+              class="search-input" 
+              placeholder="Search apps..." 
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange($event)"
+              (keyup.enter)="onSearchSubmit()"
+              autocomplete="off"
+              spellcheck="false">
+            <button class="search-submit-btn" (click)="onSearchSubmit()" *ngIf="searchTerm && searchTerm.trim()">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="search-clear" *ngIf="searchTerm" (click)="clearSearch()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <!-- Admin refresh button -->
+          <!-- <button class="refresh-data-btn" 
+                  (click)="refreshData()" 
+                  [disabled]="loading"
+                  title="Refresh app data and ratings">
+            <i class="fas fa-sync-alt" [class.fa-spin]="loading"></i>
+            <span class="btn-text">Refresh Data</span>
+          </button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Apps Section -->
+  <div class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Featured Apps</h2>
+        <p class="section-subtitle">Editor's Choice</p>
+      </div>
+      
+      <div class="featured-carousel" *ngIf="featuredApps && featuredApps.length">
+        <ngb-carousel #featuredCarousel [interval]="5000" [pauseOnHover]="true" [pauseOnFocus]="true">
+          <ng-template ngbSlide *ngFor="let app of featuredApps">
+            <div class="featured-slide" (click)="navigateToApp(app)">
+              <div class="featured-content">
+                <div class="featured-left">
+                  <div class="featured-media">
+                    <img [ngSrc]="getOptimizedImageUrl(app.iconThumbUrl || app.iconUrl, {width: 120, height: 120, quality: 80})" 
+                         [alt]="app.name" 
+                         class="featured-icon"
+                         width="120"
+                         height="120"
+                         priority>
+                  </div>
+                  <div class="featured-info">
+                    <div class="featured-badges">
+                      <span class="badge badge-featured" *ngIf="app.isFeatured">
+                        <i class="fas fa-star"></i> Featured
+                      </span>
+                      <span class="badge badge-top-rated" *ngIf="app.isTopRated">
+                        <i class="fas fa-trophy"></i> Top Rated
+                      </span>
+                      <span class="badge badge-new" *ngIf="app.isNew">
+                        <i class="fas fa-sparkles"></i> New
+                      </span>
+                    </div>
+                    <h3 class="featured-title">{{ app.name }}</h3>
+                    <p class="featured-category">{{ app.category }}</p>
+                    <p class="featured-description">{{ app.description | slice:0:80 }}<span *ngIf="app.description && app.description.length > 80">...</span></p>
+                    <div class="featured-rating" [title]="getAppStats(app)">
+                      <div class="stars" *ngIf="hasValidRating(app)">
+                        <i class="fas fa-star" *ngFor="let star of getStarsArray(app.rating)"></i>
+                        <i class="far fa-star" *ngFor="let star of getEmptyStarsArray(app.rating)"></i>
+                      </div>
+                      <div class="stars no-rating" *ngIf="!hasValidRating(app)">
+                        <i class="far fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
+                      </div>
+                      <span class="rating-text">
+                        {{ formatRating(app.rating) }} 
+                        <span class="reviews-count">({{ formatReviewsCount(app.reviewsCount || 0) }})</span>
+                      </span>
+                    </div>
+                    <button class="btn-install featured-install" 
+                            (click)="downloadApp(app, $event)"
+                            [class.installing]="app.installing">
+                      <span *ngIf="!app.installing">Install</span>
+                      <span *ngIf="app.installing">
+                        <i class="fas fa-spinner fa-spin"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Featured Images or Screenshots Grid -->
+                <div class="featured-right" *ngIf="hasFeaturedImages(app) || hasScreenshots(app)">
+                  <div class="screenshots-section" *ngIf="hasFeaturedImages(app)">
+                    <h4 class="screenshots-caption">Featured</h4>
+                    <div class="featured-images-grid">
+                      <div class="featured-image-item" 
+                           *ngFor="let featuredImage of getValidFeaturedImages(app).slice(0, 2); let i = index; trackBy: trackByIndex">
+                        <img [ngSrc]="getOptimizedImageUrl(featuredImage, {width: 400, height: 200, quality: 90})" 
+                             [alt]="app.name + ' featured image ' + (i + 1)" 
+                             class="featured-banner-image"
+                             width="400"
+                             height="200"
+                             [priority]="i === 0"
+                             [loading]="i === 0 ? undefined : 'lazy'"
+                             (error)="onImageError($event)"
+                             (load)="onImageLoad($event)">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="screenshots-section" *ngIf="!hasFeaturedImages(app) && hasScreenshots(app)">
+                    <h4 class="screenshots-caption">Screenshots</h4>
+                    <div class="screenshots-grid">
+                      <div class="screenshot-item" 
+                           *ngFor="let screenshot of getValidScreenshots(app).slice(0, 3); let i = index; trackBy: trackByIndex">
+                        <img [ngSrc]="getOptimizedImageUrl(screenshot, {width: 180, height: 250, quality: 85})" 
+                             [alt]="app.name + ' screenshot ' + (i + 1)" 
+                             class="screenshot-image"
+                             width="180"
+                             height="250"
+                             [priority]="i === 0"
+                             [loading]="i === 0 ? undefined : 'lazy'"
+                             (error)="onImageError($event)"
+                             (load)="onImageLoad($event)">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-template>
+        </ngb-carousel>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categories Section -->
+  <div class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Browse by Category</h2>
+      </div>
+      <div class="categories-grid">
+        <div class="category-card" *ngFor="let category of categories" (click)="navigateToCategory(category)">
+          <div class="category-icon">
+            <i [class]="category.icon"></i>
+          </div>
+          <span class="category-name">{{ category.name }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Rated Apps Section -->
+  <div class="top-rated-section" *ngIf="getTopRatedApps().length > 0">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          <i class="fas fa-trophy text-warning me-2"></i>
+          Top Rated Apps
+        </h2>
+        <p class="section-subtitle">Highest rated by users</p>
+      </div>
+      
+      <div class="top-rated-grid">
+        <div class="top-rated-card" 
+             *ngFor="let app of getTopRatedApps().slice(0, 6); trackBy: trackByAppId"
+             (click)="navigateToApp(app)">
+          <div class="top-rated-rank">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <img [ngSrc]="getOptimizedImageUrl(app.iconThumbUrl || app.iconUrl, {width: 50, height: 50, quality: 80})" 
+               [alt]="app.name" 
+               class="top-rated-icon"
+               width="50"
+               height="50">
+          <div class="top-rated-info">
+            <h4 class="top-rated-name">{{ app.name }}</h4>
+            <p class="top-rated-category">{{ app.category }}</p>
+            <div class="top-rated-rating" [title]="getAppStats(app)">
+              <span class="rating-stars" *ngIf="hasValidRating(app)">
+                <i class="fas fa-star" *ngFor="let star of getStarsArray(app.rating)"></i>
+                <i class="far fa-star" *ngFor="let star of getEmptyStarsArray(app.rating)"></i>
+              </span>
+              <span class="rating-stars no-rating" *ngIf="!hasValidRating(app)">
+                <i class="far fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
+              </span>
+              <span class="rating-value">{{ formatRating(app.rating) }}</span>
+              <span class="reviews-count" *ngIf="app.reviewsCount && app.reviewsCount > 0">
+                {{ formatReviewsCountShort(app.reviewsCount) }}
+              </span>
+            </div>
+          </div>
+          <button class="btn-install-small" (click)="installApp(app, $event)">
+            <i class="fas fa-download"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Apps Section -->
+  <div class="apps-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">{{ selectedCategory || 'Top Apps' }}</h2>
+        <div class="view-options">
+          <button class="view-toggle" 
+                  [class.active]="viewMode === 'grid'" 
+                  (click)="setViewMode('grid')">
+            <i class="fas fa-th-large"></i>
+          </button>
+          <button class="view-toggle" 
+                  [class.active]="viewMode === 'list'" 
+                  (click)="setViewMode('list')">
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search Results Info -->
+      <div class="search-info" *ngIf="isSearching()">
+        <p *ngIf="hasSearchResults()">
+          <i class="fas fa-search me-2"></i>
+          {{ getSearchResultsCount() }} {{ getSearchResultsCount() === 1 ? 'result' : 'results' }} for "{{ searchTerm }}"
+        </p>
+        <p *ngIf="!hasSearchResults()" class="no-results">
+          <i class="fas fa-search me-2"></i>
+          No results found for "{{ searchTerm }}"
+        </p>
+      </div>
+
+      <!-- Apps Grid/List -->
+      <div class="apps-container" [class.list-view]="viewMode === 'list'">
+        <div class="app-card" 
+             *ngFor="let app of getFilteredApps(); trackBy: trackByAppId"
+             (click)="navigateToApp(app)">
+          <div class="app-icon-container">
+            <img [ngSrc]="getOptimizedImageUrl(app.iconThumbUrl || app.iconUrl, {width: 80, height: 80, quality: 80})" 
+                 [alt]="app.name" 
+                 class="app-icon"
+                 [class.rounded-circle]="viewMode === 'list'"
+                 width="80"
+                 height="80">
+            <div class="app-badges" *ngIf="viewMode === 'grid'">
+              <span class="badge badge-featured" *ngIf="app.isFeatured">
+                <i class="fas fa-star"></i>
+              </span>
+              <span class="badge badge-top-rated" *ngIf="app.isTopRated">
+                <i class="fas fa-trophy"></i>
+              </span>
+              <span class="badge badge-new" *ngIf="app.isNew">
+                <i class="fas fa-sparkles"></i>
+              </span>
+            </div>
+          </div>
+          
+          <div class="app-info">
+            <h3 class="app-name">{{ app.name }}</h3>
+            <p class="app-category">{{ app.category }}</p>
+            <div class="app-rating" [title]="getAppStats(app)">
+              <div class="stars" *ngIf="hasValidRating(app)">
+                <span class="star-rating">{{ formatRating(app.rating) }}</span>
+                <i class="fas fa-star star-icon"></i>
+              </div>
+              <div class="stars no-rating" *ngIf="!hasValidRating(app)">
+                <span class="star-rating">{{ formatRating(app.rating) }}</span>
+                <i class="far fa-star star-icon"></i>
+              </div>
+              <span class="reviews-count">({{ formatReviewsCountShort(app.reviewsCount || 0) }})</span>
+            </div>
+            <p class="app-description" *ngIf="viewMode === 'list'">
+              {{ app.description | slice:0:80 }}<span *ngIf="app.description && app.description.length > 80">...</span>
+            </p>
+          </div>
+          
+          <div class="app-actions">
+            <button class="btn-install" 
+                    (click)="installApp(app, $event)"
+                    [class.installing]="app.installing">
+              <span *ngIf="!app.installing">Install</span>
+              <span *ngIf="app.installing">
+                <i class="fas fa-spinner fa-spin"></i>
+              </span>
+            </button>
+            <!-- <button class="btn-more" (click)="showAppOptions(app, $event)">
+              <i class="fas fa-ellipsis-v"></i>
+            </button> -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="getFilteredApps().length === 0">
+        <div class="empty-icon">
+          <i class="fas fa-search" *ngIf="isSearching()"></i>
+          <i class="fas fa-apps" *ngIf="!isSearching()"></i>
+        </div>
+        <h3 class="empty-title" *ngIf="isSearching()">No apps found</h3>
+        <h3 class="empty-title" *ngIf="!isSearching()">No apps available</h3>
+        <p class="empty-message" *ngIf="isSearching()">
+          Try different keywords or browse our categories
+        </p>
+        <p class="empty-message" *ngIf="!isSearching()">
+          Check back later for new apps and updates
+        </p>
+        <div class="empty-actions">
+          <button class="btn-primary" (click)="clearSearch()" *ngIf="isSearching()">
+            <i class="fas fa-times me-2"></i>Clear Search
+          </button>
+          <button class="btn-secondary" (click)="clearCategory()" *ngIf="selectedCategory && !isSearching()">
+            <i class="fas fa-filter me-2"></i>Clear Filter
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include Footer -->
+<app-footer></app-footer>
+
+<!-- Extra Styles for App Store Look -->
+<style>
+  .app-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .ngb-carousel .carousel-inner {
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  
+  /* Carousel navigation controls - prevent overlap with content */
+  .featured-carousel .carousel-control-prev,
+  .featured-carousel .carousel-control-next {
+    width: 50px !important;
+    height: 50px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 50% !important;
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    z-index: 1000 !important;
+    opacity: 0.9 !important;
+    transition: all 0.3s ease !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  .featured-carousel .carousel-control-prev {
+    left: 20px !important;
+  }
+  
+  .featured-carousel .carousel-control-next {
+    right: 20px !important;
+  }
+  
+  .featured-carousel .carousel-control-prev:hover,
+  .featured-carousel .carousel-control-next:hover {
+    opacity: 1 !important;
+    background: white !important;
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .featured-carousel .carousel-control-prev-icon,
+  .featured-carousel .carousel-control-next-icon {
+    width: 22px !important;
+    height: 22px !important;
+    filter: brightness(0) saturate(100%) invert(42%) sepia(93%) saturate(1352%) hue-rotate(200deg) brightness(119%) contrast(119%) !important;
+  }
+  
+  /* Mobile adjustments for carousel controls */
+  @media (max-width: 768px) {
+    .featured-carousel .carousel-control-prev,
+    .featured-carousel .carousel-control-next {
+      width: 40px !important;
+      height: 40px !important;
+    }
+    
+    .featured-carousel .carousel-control-prev {
+      left: 10px !important;
+    }
+    
+    .featured-carousel .carousel-control-next {
+      right: 10px !important;
+    }
+    
+    .featured-carousel .carousel-control-prev-icon,
+    .featured-carousel .carousel-control-next-icon {
+      width: 18px !important;
+      height: 18px !important;
+    }
+    
+    /* Hide screenshots section on mobile */
+    .featured-right {
+      display: none !important;
+    }
+  }
+  
+  /* Search improvements */
+  .search-info {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(0, 123, 255, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+  }
+  
+  .search-info p {
+    margin: 0;
+    color: #495057;
+    font-weight: 500;
+  }
+  
+  .search-info .no-results {
+    color: #6c757d;
+  }
+  
+  .search-info i {
+    color: #007bff;
+  }
+  
+  /* Empty state improvements */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .empty-icon i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-title {
+    color: #495057;
+    margin-bottom: 0.5rem;
+  }
+  
+  .empty-message {
+    color: #6c757d;
+    margin-bottom: 2rem;
+  }
+  
+  .empty-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+  }
+  
+  /* Search input enhancements */
+  .search-input:focus {
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+  }
+  
+  .search-clear {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 10;
+  }
+  
+  .search-clear:hover {
+    background: rgba(108, 117, 125, 0.1);
+    color: #495057;
+  }
+  
+  .search-submit-btn {
+    position: absolute;
+    right: 45px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #007bff;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    z-index: 10;
+  }
+  
+  .search-submit-btn:hover {
+    background: #0056b3;
+    transform: translateY(-50%) scale(1.05);
+  }
+  
+  .search-submit-btn:active {
+    background: #004085;
+    transform: translateY(-50%) scale(0.98);
+  }
+  
+  /* Mobile optimizations for search buttons */
+  @media (max-width: 768px) {
+    .search-submit-btn {
+      right: 40px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+    
+    .search-clear {
+      right: 8px;
+      padding: 6px;
+    }
+  }
+  
+  /* Additional mobile performance optimizations */
+  @media (max-width: 480px) {
+    .search-input {
+      /* Disable animations on mobile for better performance */
+      transition: none;
+    }
+    
+    .featured-carousel .carousel-control-prev,
+    .featured-carousel .carousel-control-next {
+      /* Larger touch targets for mobile */
+      width: 44px !important;
+      height: 44px !important;
+      min-width: 44px !important;
+      min-height: 44px !important;
+    }
+    
+    /* Optimize list view for mobile */
+    .apps-container.list-view .app-card {
+      flex-direction: column;
+      text-align: center;
+      
+      .app-icon-container {
+        margin-right: 0;
+        margin-bottom: 15px;
+      }
+      
+      .app-info {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+    }
+  }
+  .stars.no-rating {
+    opacity: 0.3;
+  }
+  
+  .rating-stars.no-rating {
+    opacity: 0.3;
+  }
+  
+  /* Ensure all stars are displayed in row layout */
+  .stars,
+  .rating-stars {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 2px;
+  }
+  
+  .featured-rating,
+  .top-rated-rating,
+  .app-rating {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .app-rating {
+    justify-content: center;
+  }
+  
+  .list-view .app-rating {
+    justify-content: flex-start;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .featured-rating {
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .stars,
+    .rating-stars {
+      gap: 1px;
+    }
+  }
+  
+  .reviews-count {
+    font-size: 0.9em;
+    color: #666;
+    margin-left: 0.25rem;
+  }
+  
+  .featured-rating .reviews-count {
+    display: inline;
+    margin-top: 0;
+    margin-left: 0.5rem;
+  }
+  
+  /* Star icon consistency */
+  .star-icon {
+    color: #ffd700;
+    margin-left: 0.25rem;
+  }
+  
+  .no-rating .star-icon {
+    color: #ddd;
+  }
+  
+  /* Refresh data button */
+  .search-container {
+    position: relative;
+  }
+  
+  .refresh-data-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .refresh-data-btn:hover {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .refresh-data-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .refresh-data-btn .btn-text {
+    display: none;
+  }
+  
+  @media (min-width: 768px) {
+    .refresh-data-btn .btn-text {
+      display: inline;
+    }
+  }
+  
+  /* Loading overlay */
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  
+  .loading-spinner {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  }
+  
+  .loading-spinner i {
+    font-size: 2rem;
+    color: #007bff;
+  }
+  
+  .loading-spinner span {
+    font-weight: 500;
+    color: #333;
+  }
+</style>

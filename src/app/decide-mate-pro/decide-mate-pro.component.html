@@ -1,0 +1,81 @@
+<!-- Include Header Component -->
+<app-header></app-header>
+
+<!-- App Header: Icon, Title, Publisher, Rating, and Install Button -->
+<div class="app-header container my-4">
+  <div class="row align-items-center">
+    <div class="col-md-2 text-center">
+      <img [ngSrc]="app.iconUrl" 
+           [alt]="app.name + ' Icon'" 
+           class="app-icon img-fluid rounded"
+           width="100" 
+           height="100"
+           [placeholder]="app.iconUrl"
+           priority>
+    </div>
+    <div class="col-md-10">
+      <h1 class="app-title">{{ app.name }}</h1>
+      <p class="app-publisher">{{ app.publisher }}</p>
+      <div class="rating d-flex align-items-center mb-2">
+        <span class="badge bg-warning text-dark me-2">{{ app.rating }}</span>
+        <span class="reviews">({{ app.reviewsCount | number }})</span>
+      </div>
+      <button class="btn btn-primary" (click)="downloadApp()">Install</button>
+    </div>
+  </div>
+</div>
+
+<!-- Screenshots Carousel using ngx-owl-carousel-o -->
+<div class="container my-4">
+  <owl-carousel-o [options]="customOptions">
+    <ng-container *ngFor="let shot of app.screenshots">
+      <ng-template carouselSlide>
+        <img [ngSrc]="shot" 
+             alt="Screenshot" 
+             class="d-block w-100 screenshot"
+             width="250" 
+             height="400"
+             [placeholder]="shot">
+      </ng-template>
+    </ng-container>
+  </owl-carousel-o>
+</div>
+
+<!-- App Details: Description & What's New -->
+<div class="container my-4">
+  <div class="row">
+    <!-- Description -->
+    <div class="col-md-8">
+      <h2>Description</h2>
+      <p>Decide smarter, faster! Explore Quick Spin, Insights, and History—your ultimate decision-making assistant. Download now!</p>
+      <p>Take the Guesswork Out of Your Day with Decidemate Pro!</p>
+      <p>Feeling overwhelmed by choices? Whether it’s deciding which watch to wear, what movie to watch, or even what to eat, Decidemate Pro makes decision-making effortless, fun, and stress-free!</p>
+      <p>With a sleek, customizable decision spinner, you can turn any dilemma into an easy and exciting choice. Say goodbye to indecision and hello to clarity with just one spin.</p>
+      <h3>Key Features:</h3>
+      <ul>
+        <li>Customizable Spinners: Personalize your decision wheel with your own choices. Add as many options as you need!</li>
+        <li>Versatile Usage: Perfect for picking outfits, meals, entertainment, or any situation where you need a quick decision.</li>
+      </ul>
+      <h3>Why Decidemate Pro?</h3>
+      <p>We all face countless decisions every day. Instead of wasting time deliberating, let Decidemate Pro streamline your choices. It’s like having a personal decision-making assistant in your pocket!</p>
+      <h3>Who Is This App For?</h3>
+      <ul>
+        <li>Busy Professionals: Quickly decide between tasks, outfits, or meals.</li>
+        <li>Families & Friends: Use it for group activities, games, or shared decisions.</li>
+        <li>The Indecisive: If you struggle to pick, let Decidemate Pro do the hard work for you!</li>
+      </ul>
+      <p>Make Decisions Effortless – Download Decidemate Pro Today!</p>
+      <p>Simplify your life, add a little fun to your routine, and never get stuck in indecision again.</p>
+    </div>
+    <!-- What's New and Version -->
+    <div class="col-md-4">
+      <h2>What's New</h2>
+      <p>{{ app.whatsNew }}</p>
+      <h3>Version</h3>
+      <p>{{ app.version }}</p>
+    </div>
+  </div>
+</div>
+
+<!-- Include Footer Component -->
+<app-footer></app-footer>

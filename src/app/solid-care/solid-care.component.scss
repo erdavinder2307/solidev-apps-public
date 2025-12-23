@@ -1,0 +1,33 @@
+/* App Header Styles */
+.app-header .app-icon {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .app-title {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .app-publisher {
+    color: #555;
+    margin: 0;
+  }
+  
+  .rating .badge {
+    font-size: 1rem;
+  }
+  
+  /* Carousel Screenshots */
+  /* Limit the height to 400px and crop higher images while maintaining aspect ratio */
+  .screenshot {
+    // max-height: 300px !important;
+    // object-fit: cover;
+    // width: 100%;
+  }
+  
+  /* Container width */
+  .container {
+    max-width: 1200px;
+  }
+  

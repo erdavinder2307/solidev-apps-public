@@ -1,0 +1,582 @@
+// Hero Banner Styles
+.hero-banner {
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  
+  @media (max-width: 768px) {
+    height: 300px;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (max-width: 480px) {
+    height: 250px;
+    margin-bottom: 1rem;
+  }
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  max-width: 600px;
+  padding: 0 1rem;
+  
+  @media (max-width: 480px) {
+    padding: 0 0.75rem;
+  }
+}
+
+.hero-logo {
+  margin-bottom: 1.5rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 0.75rem;
+  }
+}
+
+.logo-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  background: white;
+  padding: 8px;
+  
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    border-radius: 14px;
+    padding: 6px;
+  }
+  
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    padding: 5px;
+  }
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  
+  @media (max-width: 768px) {
+    font-size: 2.2rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  opacity: 0.9;
+  margin: 0;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+  }
+}
+
+// Main Content Container
+.about-container {
+  padding: 2rem 0;
+  background: #f8f9fa;
+  min-height: 60vh;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 0;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0;
+  }
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 0 10px;
+  }
+}
+
+// Story Cards
+.story-card {
+  margin-bottom: 2rem;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none !important;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 1.5rem;
+    border-radius: 12px !important;
+  }
+  
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+    border-radius: 10px !important;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    
+    @media (max-width: 768px) {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .mat-card-header {
+    @media (max-width: 480px) {
+      padding: 12px !important;
+    }
+  }
+  
+  .mat-card-content {
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+      padding: 12px !important;
+    }
+  }
+}
+
+.intro-card {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+
+  .mat-card-title,
+  .section-icon {
+    color: white !important;
+  }
+}
+
+.incident-card {
+  border-left: 4px solid #f44336;
+}
+
+.turning-point-card {
+  border-left: 4px solid #ff9800;
+}
+
+.vision-card {
+  border-left: 4px solid #4caf50;
+}
+
+.cta-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  text-align: center;
+
+  .mat-card-content {
+    padding: 2rem !important;
+    
+    @media (max-width: 768px) {
+      padding: 1.5rem !important;
+    }
+    
+    @media (max-width: 480px) {
+      padding: 1rem !important;
+    }
+  }
+
+  .cta-title {
+    color: white;
+    margin-bottom: 1rem;
+    
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1.3rem;
+    }
+  }
+
+  .cta-text {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    
+    @media (max-width: 768px) {
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    
+    @media (max-width: 480px) {
+      gap: 0.75rem;
+      
+      button {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+  }
+}
+
+// Section Headers
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #333;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem !important;
+    gap: 0.4rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.15rem !important;
+    gap: 0.3rem;
+  }
+}
+
+.section-icon {
+  color: #667eea;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
+}
+
+// Content Styles
+.intro-text {
+
+  line-height: 1.6;
+  margin-bottom: 0;
+  font-weight: 400;
+}
+
+.emphasis-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.highlight-text {
+  background: #fff3cd;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+  font-weight: 500;
+  margin: 1rem 0;
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, #fff9c4, #fff3cd);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  text-align: center;
+  border: 1px solid #ffe082;
+
+  .highlight-icon {
+    color: #ff9800;
+
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+}
+
+// Vision Points
+.vision-points {
+  margin: 1.5rem 0;
+}
+
+.vision-point {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  
+  @media (max-width: 768px) {
+    gap: 0.6rem;
+    font-size: 0.95rem;
+  }
+  
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .point-icon {
+    color: #4caf50;
+    font-size: 1.25rem !important;
+    
+    @media (max-width: 768px) {
+      font-size: 1.1rem !important;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 1rem !important;
+    }
+  }
+}
+
+// Section Divider
+.section-divider {
+  margin: 2rem 0 !important;
+}
+
+// Conclusion Styles
+.conclusion {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.conclusion-text {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.welcome-message {
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #2196f3;
+
+  .rocket-icon {
+    color: #2196f3;
+    font-size: 2rem !important;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1565c0;
+  }
+}
+
+// Inspirational Footer
+.inspirational-footer {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  
+  @media (max-width: 768px) {
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+  }
+  
+  @media (max-width: 480px) {
+    padding: 1rem 0;
+    margin-top: 1.5rem;
+  }
+}
+
+.footer-quote {
+  font-size: 1.25rem;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0 1rem;
+  
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1rem;
+    gap: 0.3rem;
+  }
+}
+
+.quote-icon {
+  color: #667eea;
+  font-size: 1.5rem !important;
+  
+  @media (max-width: 768px) {
+    font-size: 1.3rem !important;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem !important;
+  }
+}
+
+.footer-year {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .logo-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .hero-banner {
+    height: 300px;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+
+  .about-container {
+    padding: 1rem 0;
+  }
+
+  .story-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .intro-text {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1.25rem !important;
+  }
+
+  .footer-quote {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+
+    button {
+      width: 200px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .vision-point {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .highlight-box,
+  .welcome-message {
+    padding: 1rem;
+  }
+}
+
+// Material Design Overrides
+::ng-deep {
+  .mat-card-header {
+    padding-bottom: 1rem !important;
+  }
+
+  .mat-card-content {
+    padding-top: 0 !important;
+    
+    p {
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .mat-raised-button {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 1.5rem !important;
+    text-transform: none !important;
+  }
+
+  .mat-stroked-button {
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 1.5rem !important;
+    text-transform: none !important;
+  }
+}

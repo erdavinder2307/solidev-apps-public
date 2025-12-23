@@ -1,0 +1,661 @@
+<!-- Modern Add App Form -->
+<div class="add-app-container">
+  <div class="form-wrapper">
+    <!-- Header Section -->
+    <div class="form-header text-center mb-4">
+      <div class="header-icon mb-3">
+        <i class="bi bi-{{ isEdit ? 'pencil-square' : 'plus-circle-fill' }}"></i>
+      </div>
+      <h2 class="fw-bold text-dark">{{ isEdit ? 'Update Application' : 'Create New App' }}</h2>
+      <p class="text-muted">{{ isEdit ? 'Update your app details and publish changes' : 'Fill in the details to publish your app to the store' }}</p>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="progress-indicator mb-4" *ngIf="!isEdit">
+      <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-circle">1</div>
+        <div class="step-label">Basic Info</div>
+      </div>
+      <div class="step-line" [class.completed]="currentStep > 1"></div>
+      <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-circle">2</div>
+        <div class="step-label">Media Files</div>
+      </div>
+      <div class="step-line" [class.completed]="currentStep > 2"></div>
+      <div class="step" [class.active]="currentStep >= 3">
+        <div class="step-circle">3</div>
+        <div class="step-label">Review & Submit</div>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="developer-add-app-form" autocomplete="off">
+      <!-- Step 1: Basic Information -->
+      <div class="form-card" [class.d-none]="!isEdit && currentStep !== 1">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-info-circle me-2"></i>
+            Basic Information
+          </h5>
+          <p class="text-muted small mb-0">Enter your app's basic details</p>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <!-- App Name -->
+            <div class="col-12">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>App Name</mat-label>
+                  <input matInput formControlName="name" placeholder="Enter your app name" required>
+                  <mat-icon matSuffix class="field-icon">apps</mat-icon>
+                  <mat-error *ngIf="form.get('name')?.hasError('required')">App name is required</mat-error>
+                  <mat-error *ngIf="form.get('name')?.hasError('minlength')">App name must be at least 3 characters</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Category and Version -->
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Category</mat-label>
+                  <mat-select formControlName="category" required>
+                    <mat-option *ngFor="let cat of categories" [value]="cat">
+                      <i class="bi bi-{{ getCategoryIcon(cat) }} me-2"></i>
+                      {{ cat }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix class="field-icon">category</mat-icon>
+                  <mat-error *ngIf="form.get('category')?.hasError('required')">Category is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Version</mat-label>
+                  <input matInput formControlName="version" placeholder="e.g., 1.0.0" required>
+                  <mat-icon matSuffix class="field-icon">tag</mat-icon>
+                  <mat-error *ngIf="form.get('version')?.hasError('required')">Version is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Publisher -->
+            <div class="col-12">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Publisher</mat-label>
+                  <input matInput formControlName="publisher" placeholder="Your company or developer name" required>
+                  <mat-icon matSuffix class="field-icon">business</mat-icon>
+                  <mat-error *ngIf="form.get('publisher')?.hasError('required')">Publisher name is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Package Name -->
+            <div class="col-12">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Package Name</mat-label>
+                  <input matInput formControlName="packageName" placeholder="e.g., com.solidev.myapp" required>
+                  <mat-icon matSuffix class="field-icon">code</mat-icon>
+                  <mat-hint>Use reverse domain notation (e.g., com.company.appname)</mat-hint>
+                  <mat-error *ngIf="form.get('packageName')?.hasError('required')">Package name is required</mat-error>
+                  <mat-error *ngIf="form.get('packageName')?.hasError('pattern')">Invalid package name format</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Size and Minimum Android -->
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>App Size</mat-label>
+                  <input matInput formControlName="size" placeholder="e.g., 25 MB" required>
+                  <mat-icon matSuffix class="field-icon">storage</mat-icon>
+                  <mat-error *ngIf="form.get('size')?.hasError('required')">App size is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Minimum Android Version</mat-label>
+                  <mat-select formControlName="requiresAndroid" required>
+                    <mat-option value="4.4+">4.4+ (KitKat)</mat-option>
+                    <mat-option value="5.0+">5.0+ (Lollipop)</mat-option>
+                    <mat-option value="6.0+">6.0+ (Marshmallow)</mat-option>
+                    <mat-option value="7.0+">7.0+ (Nougat)</mat-option>
+                    <mat-option value="8.0+">8.0+ (Oreo)</mat-option>
+                    <mat-option value="9.0+">9.0+ (Pie)</mat-option>
+                    <mat-option value="10.0+">10.0+ (Q)</mat-option>
+                    <mat-option value="11.0+">11.0+ (R)</mat-option>
+                    <mat-option value="12.0+">12.0+ (S)</mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix class="field-icon">android</mat-icon>
+                  <mat-error *ngIf="form.get('requiresAndroid')?.hasError('required')">Android version is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Age Rating and Content Rating -->
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Age Rating</mat-label>
+                  <mat-select formControlName="ageRating" required>
+                    <mat-option value="Everyone">Everyone</mat-option>
+                    <mat-option value="Everyone 10+">Everyone 10+</mat-option>
+                    <mat-option value="Teen">Teen (13+)</mat-option>
+                    <mat-option value="Mature 17+">Mature 17+</mat-option>
+                    <mat-option value="Adults only 18+">Adults only 18+</mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix class="field-icon">verified_user</mat-icon>
+                  <mat-error *ngIf="form.get('ageRating')?.hasError('required')">Age rating is required</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="col-12 col-md-6">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Content Rating</mat-label>
+                  <mat-select formControlName="contentRating">
+                    <mat-option value="Everyone">Everyone</mat-option>
+                    <mat-option value="Everyone 10+">Everyone 10+</mat-option>
+                    <mat-option value="Teen">Teen</mat-option>
+                    <mat-option value="Mature 17+">Mature 17+</mat-option>
+                    <mat-option value="Adults only 18+">Adults only 18+</mat-option>
+                    <mat-option value="Unrated">Unrated</mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix class="field-icon">info</mat-icon>
+                  <mat-hint>Displayed as "Rated for" on app details</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <div class="col-12">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>Description</mat-label>
+                  <textarea 
+                    matInput 
+                    formControlName="description" 
+                    rows="4" 
+                    placeholder="Describe what your app does and its key features..."
+                    required></textarea>
+                  <mat-icon matSuffix class="field-icon">description</mat-icon>
+                  <mat-error *ngIf="form.get('description')?.hasError('required')">Description is required</mat-error>
+                  <mat-error *ngIf="form.get('description')?.hasError('minlength')">Description must be at least 20 characters</mat-error>
+                </mat-form-field>
+                <div class="character-count">
+                  {{ form.get('description')?.value?.length || 0 }}/1000 characters
+                </div>
+              </div>
+            </div>
+
+            <!-- What's New -->
+            <div class="col-12">
+              <div class="form-group">
+                <mat-form-field appearance="outline" class="w-100 modern-field">
+                  <mat-label>What's New (Optional)</mat-label>
+                  <textarea 
+                    matInput
+                    formControlName="whatsNew"
+                    placeholder="Describe what's new in this version"
+                    rows="3"></textarea>
+                  <mat-icon matSuffix class="field-icon">new_releases</mat-icon>
+                  <mat-hint>List new features, improvements, and bug fixes</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- App Features -->
+            <div class="col-12">
+              <div class="feature-toggles">
+                <h6 class="mb-3">
+                  <i class="bi bi-toggles me-2"></i>
+                  App Features
+                </h6>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="feature-card" [class.active]="form.get('isFeatured')?.value">
+                      <mat-checkbox formControlName="isFeatured" class="feature-checkbox">
+                        <div class="feature-content">
+                          <div class="feature-icon featured">
+                            <i class="bi bi-star-fill"></i>
+                          </div>
+                          <div class="feature-info">
+                            <h6 class="feature-title">Featured App</h6>
+                            <p class="feature-description">Highlight this app in the featured section</p>
+                          </div>
+                        </div>
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="feature-card" [class.active]="form.get('isTopRated')?.value">
+                      <mat-checkbox formControlName="isTopRated" class="feature-checkbox">
+                        <div class="feature-content">
+                          <div class="feature-icon top-rated">
+                            <i class="bi bi-trophy-fill"></i>
+                          </div>
+                          <div class="feature-info">
+                            <h6 class="feature-title">Top Rated</h6>
+                            <p class="feature-description">Mark this app as top rated by users</p>
+                          </div>
+                        </div>
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="feature-card" [class.active]="form.get('containsAds')?.value">
+                      <mat-checkbox formControlName="containsAds" class="feature-checkbox">
+                        <div class="feature-content">
+                          <div class="feature-icon ads">
+                            <i class="bi bi-badge-ad-fill"></i>
+                          </div>
+                          <div class="feature-info">
+                            <h6 class="feature-title">Contains Ads</h6>
+                            <p class="feature-description">This app displays advertisements</p>
+                          </div>
+                        </div>
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="feature-card" [class.active]="form.get('inAppPurchases')?.value">
+                      <mat-checkbox formControlName="inAppPurchases" class="feature-checkbox">
+                        <div class="feature-content">
+                          <div class="feature-icon purchases">
+                            <i class="bi bi-cart-fill"></i>
+                          </div>
+                          <div class="feature-info">
+                            <h6 class="feature-title">In-App Purchases</h6>
+                            <p class="feature-description">This app offers in-app purchases</p>
+                          </div>
+                        </div>
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+                    <!-- Step Navigation -->
+          <div class="step-navigation mt-4" *ngIf="!isEdit">
+            <button type="button" mat-raised-button color="primary" class="next-btn" (click)="nextStep()" [disabled]="!isStepValid(1)">
+              Next: Upload Files
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Media Files -->
+      <div class="form-card" [class.d-none]="!isEdit && currentStep !== 2">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-images me-2"></i>
+            Media Files
+          </h5>
+          <p class="text-muted small mb-0">Upload your app icon, screenshots, and APK file</p>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <!-- App Icon Upload -->
+            <div class="col-12">
+              <div class="upload-section">
+                <h6 class="mb-3">
+                  <i class="bi bi-app-indicator me-2"></i>
+                  App Icon <span class="text-danger">*</span>
+                </h6>
+                <div class="upload-area icon-upload" 
+                     (dragover)="onDragOver($event)" 
+                     (drop)="onIconDrop($event)"
+                     [class.has-file]="iconFile || existingIconUrl">
+                  <input type="file" 
+                         accept="image/*" 
+                         (change)="onIconSelected($event)" 
+                         [disabled]="uploading" 
+                         class="file-input">
+                  
+                  <div class="upload-content" *ngIf="!iconFile && !existingIconUrl">
+                    <div class="upload-icon">
+                      <i class="bi bi-cloud-upload"></i>
+                    </div>
+                    <p class="upload-title">Drop your app icon here</p>
+                    <p class="upload-subtitle">or <span class="text-primary">browse files</span></p>
+                    <small class="text-muted">PNG, JPG up to 2MB • Recommended: 512x512px</small>
+                  </div>
+                  
+                  <div class="file-preview" *ngIf="iconFile || existingIconUrl">
+                    <div class="preview-image">
+                      <img [ngSrc]="(iconPreview || existingIconUrl)!" 
+                           alt="App Icon Preview"
+                           width="100" 
+                           height="100"
+                           [placeholder]="(iconPreview || existingIconUrl)!">
+                    </div>
+                    <div class="file-info">
+                      <p class="file-name">{{ iconFile?.name || 'Current icon' }}</p>
+                      <p class="file-size" *ngIf="iconFile">{{ formatFileSize(iconFile.size) }}</p>
+                      <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeIcon()">
+                        <i class="bi bi-trash"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <mat-progress-bar *ngIf="iconUploadProgress > 0 && uploading" 
+                                  mode="determinate" 
+                                  [value]="iconUploadProgress"
+                                  class="mt-2"></mat-progress-bar>
+              </div>
+            </div>
+
+            <!-- Screenshots Upload -->
+            <div class="col-12">
+              <div class="upload-section">
+                <h6 class="mb-3">
+                  <i class="bi bi-images me-2"></i>
+                  Screenshots <span class="text-muted">(Optional)</span>
+                </h6>
+                <div class="upload-area screenshots-upload" 
+                     (dragover)="onDragOver($event)" 
+                     (drop)="onScreenshotsDrop($event)"
+                     [class.has-files]="screenshots.length > 0 || existingScreenshotUrls.length > 0">
+                  <input type="file" 
+                         accept="image/*" 
+                         multiple 
+                         (change)="onScreenshotsSelected($event)" 
+                         [disabled]="uploading" 
+                         class="file-input">
+                  
+                  <div class="upload-content" *ngIf="screenshots.length === 0 && existingScreenshotUrls.length === 0">
+                    <div class="upload-icon">
+                      <i class="bi bi-images"></i>
+                    </div>
+                    <p class="upload-title">Add screenshots</p>
+                    <p class="upload-subtitle">or <span class="text-primary">browse files</span></p>
+                    <small class="text-muted">PNG, JPG up to 5MB each • Up to 6 images</small>
+                  </div>
+                </div>
+                
+                <!-- Screenshots Preview -->
+                <div class="screenshots-preview mt-3" *ngIf="screenshots.length > 0 || existingScreenshotUrls.length > 0">
+                  <div class="row g-2">
+                    <div class="col-6 col-md-4 col-lg-3" *ngFor="let screenshot of screenshotPreviews; let i = index">
+                      <div class="screenshot-item">
+                        <img [ngSrc]="screenshot" 
+                             [alt]="'Screenshot ' + (i + 1)"
+                             width="150" 
+                             height="200"
+                             [placeholder]="screenshot">
+                        <button type="button" class="remove-btn" (click)="removeScreenshot(i)">
+                          <i class="bi bi-x"></i>
+                        </button>
+                        <mat-progress-bar *ngIf="screenshotsUploadProgress[i] > 0 && uploading" 
+                                          mode="determinate" 
+                                          [value]="screenshotsUploadProgress[i]"></mat-progress-bar>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Featured Images Upload -->
+            <div class="col-12">
+              <div class="upload-section">
+                <h6 class="mb-3">
+                  <i class="bi bi-star-fill me-2"></i>
+                  Featured Images <span class="text-muted">(Optional - for Featured Apps Section)</span>
+                </h6>
+                <div class="upload-area featured-images-upload" 
+                     (dragover)="onDragOver($event)" 
+                     (drop)="onFeaturedImagesDrop($event)"
+                     [class.has-files]="featuredImages.length > 0 || existingFeaturedImageUrls.length > 0">
+                  <input type="file" 
+                         accept="image/*" 
+                         multiple 
+                         (change)="onFeaturedImagesSelected($event)" 
+                         [disabled]="uploading" 
+                         class="file-input">
+                  
+                  <div class="upload-content" *ngIf="featuredImages.length === 0 && existingFeaturedImageUrls.length === 0">
+                    <div class="upload-icon">
+                      <i class="bi bi-star-fill"></i>
+                    </div>
+                    <p class="upload-title">Add featured images</p>
+                    <p class="upload-subtitle">
+                      High-quality images for the featured carousel<br>
+                      <span class="text-primary">Click to browse</span> or drag & drop
+                    </p>
+                    <small class="text-muted">PNG, JPG • Recommended: 1200x600px • Up to 3 images</small>
+                  </div>
+                </div>
+                
+                <!-- Featured Images Preview -->
+                <div class="screenshots-preview mt-3" *ngIf="featuredImages.length > 0 || existingFeaturedImageUrls.length > 0">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6" *ngFor="let featuredImage of featuredImagePreviews; let i = index">
+                      <div class="featured-image-item">
+                        <img [ngSrc]="featuredImage" 
+                             [alt]="'Featured Image ' + (i + 1)"
+                             width="600" 
+                             height="300"
+                             [placeholder]="featuredImage">
+                        <button type="button" class="remove-btn" (click)="removeFeaturedImage(i)">
+                          <i class="bi bi-x"></i>
+                        </button>
+                        <mat-progress-bar *ngIf="featuredImagesUploadProgress[i] > 0 && uploading" 
+                                          mode="determinate" 
+                                          [value]="featuredImagesUploadProgress[i]"></mat-progress-bar>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- APK Upload -->
+            <div class="col-12">
+              <div class="upload-section">
+                <h6 class="mb-3">
+                  <i class="bi bi-file-earmark-zip me-2"></i>
+                  APK File <span class="text-danger">*</span>
+                </h6>
+                <div class="upload-area apk-upload" 
+                     (dragover)="onDragOver($event)" 
+                     (drop)="onApkDrop($event)"
+                     [class.has-file]="apkFile || existingApkUrl">
+                  <input type="file" 
+                         accept=".apk" 
+                         (change)="onApkSelected($event)" 
+                         [disabled]="uploading" 
+                         class="file-input">
+                  
+                  <div class="upload-content" *ngIf="!apkFile && !existingApkUrl">
+                    <div class="upload-icon">
+                      <i class="bi bi-file-earmark-zip"></i>
+                    </div>
+                    <p class="upload-title">Upload your APK file</p>
+                    <p class="upload-subtitle">or <span class="text-primary">browse files</span></p>
+                    <small class="text-muted">APK files only • Max 100MB</small>
+                  </div>
+                  
+                  <div class="file-preview" *ngIf="apkFile || existingApkUrl">
+                    <div class="file-icon">
+                      <i class="bi bi-file-earmark-zip"></i>
+                    </div>
+                    <div class="file-info">
+                      <p class="file-name">{{ apkFile?.name || 'Current APK file' }}</p>
+                      <p class="file-size" *ngIf="apkFile">{{ formatFileSize(apkFile.size) }}</p>
+                      <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeApk()">
+                        <i class="bi bi-trash"></i> Remove
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <mat-progress-bar *ngIf="apkUploadProgress > 0 && uploading" 
+                                  mode="determinate" 
+                                  [value]="apkUploadProgress"
+                                  class="mt-2"></mat-progress-bar>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step Navigation -->
+          <div class="step-navigation mt-4" *ngIf="!isEdit">
+            <button type="button" mat-stroked-button class="prev-btn me-3" (click)="prevStep()">
+              <mat-icon>arrow_back</mat-icon>
+              Previous
+            </button>
+            <button type="button" mat-raised-button color="primary" class="next-btn" (click)="nextStep()" [disabled]="!isStepValid(2)">
+              Next: Review
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Review & Submit -->
+      <div class="form-card" [class.d-none]="!isEdit && currentStep !== 3">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-check-circle me-2"></i>
+            Review & Submit
+          </h5>
+          <p class="text-muted small mb-0">Review your app details before publishing</p>
+        </div>
+        <div class="card-body">
+          <!-- App Preview -->
+          <div class="app-preview mb-4">
+            <div class="preview-card">
+              <div class="app-header">
+                <div class="app-icon-preview">
+                  <img [ngSrc]="iconPreview || existingIconUrl || '/assets/images/default-app-icon.png'" 
+                       alt="App Icon"
+                       width="80" 
+                       height="80"
+                       [placeholder]="iconPreview || existingIconUrl || '/assets/images/default-app-icon.png'">
+                </div>
+                <div class="app-basic-info">
+                  <h5 class="app-name">{{ form.get('name')?.value || 'App Name' }}</h5>
+                  <p class="app-publisher">{{ form.get('publisher')?.value || 'Publisher' }}</p>
+                  <div class="app-meta">
+                    <span class="category-badge">{{ form.get('category')?.value || 'Category' }}</span>
+                    <span class="version-badge">v{{ form.get('version')?.value || '1.0.0' }}</span>
+                  </div>
+                </div>
+                <div class="app-badges">
+                  <span class="badge featured" *ngIf="form.get('isFeatured')?.value">
+                    <i class="bi bi-star-fill"></i> Featured
+                  </span>
+                  <span class="badge top-rated" *ngIf="form.get('isTopRated')?.value">
+                    <i class="bi bi-trophy-fill"></i> Top Rated
+                  </span>
+                </div>
+              </div>
+              <div class="app-description">
+                <p>{{ form.get('description')?.value || 'App description will appear here...' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- File Summary -->
+          <div class="files-summary mb-4">
+            <h6 class="mb-3">Uploaded Files</h6>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="file-summary-item">
+                  <i class="bi bi-app-indicator"></i>
+                  <span>App Icon</span>
+                  <div class="status" [class.success]="iconFile || existingIconUrl" [class.error]="!iconFile && !existingIconUrl">
+                    <i class="bi bi-{{ (iconFile || existingIconUrl) ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="file-summary-item">
+                  <i class="bi bi-images"></i>
+                  <span>Screenshots ({{ (screenshots.length || existingScreenshotUrls.length) }})</span>
+                  <div class="status success">
+                    <i class="bi bi-check-circle-fill"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="file-summary-item">
+                  <i class="bi bi-file-earmark-zip"></i>
+                  <span>APK File</span>
+                  <div class="status" [class.success]="apkFile || existingApkUrl" [class.error]="!apkFile && !existingApkUrl">
+                    <i class="bi bi-{{ (apkFile || existingApkUrl) ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Section -->
+          <div class="submit-section">
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="button" mat-stroked-button class="prev-btn" (click)="prevStep()" *ngIf="!isEdit">
+                <mat-icon>arrow_back</mat-icon>
+                Previous
+              </button>
+              <button type="submit" 
+                      mat-raised-button 
+                      color="primary" 
+                      class="submit-btn"
+                      [disabled]="form.invalid || uploading || (!iconFile && !existingIconUrl) || (!apkFile && !existingApkUrl)">
+                <mat-icon *ngIf="!uploading">{{ isEdit ? 'update' : 'publish' }}</mat-icon>
+                <mat-progress-spinner *ngIf="uploading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+                {{ uploading ? 'Publishing...' : (isEdit ? 'Update App' : 'Publish App') }}
+              </button>
+            </div>
+            <div class="text-center mt-3" *ngIf="!isEdit">
+              <small class="text-muted">
+                By publishing, you agree to our 
+                <a href="#" class="text-primary">Terms of Service</a> and 
+                <a href="#" class="text-primary">Privacy Policy</a>
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Single Card for Edit Mode -->
+      <div class="form-card" *ngIf="isEdit">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <i class="bi bi-pencil-square me-2"></i>
+            Update Application
+          </h5>
+          <p class="text-muted small mb-0">Make changes to your app and republish</p>
+        </div>
+        <div class="card-body">
+          <!-- All form fields and upload areas combined for edit mode -->
+          <div class="submit-section mt-4">
+            <button type="submit" 
+                    mat-raised-button 
+                    color="primary" 
+                    class="submit-btn w-100"
+                    [disabled]="form.invalid || uploading">
+              <mat-icon *ngIf="!uploading">update</mat-icon>
+              <mat-progress-spinner *ngIf="uploading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+              {{ uploading ? 'Updating...' : 'Update App' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<style>
+
+</style>

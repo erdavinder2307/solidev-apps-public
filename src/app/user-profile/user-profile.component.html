@@ -1,0 +1,419 @@
+<app-header></app-header>
+
+<div class="profile-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="container py-5">
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading profile...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading your profile...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div *ngIf="!loading && user" class="profile-content">
+    <div class="container py-4">
+      
+      <!-- Profile Header -->
+      <div class="profile-header mb-4">
+        <div class="row align-items-center">
+          <div class="col-12 col-md-auto">
+            <div class="profile-avatar">
+              <img 
+                *ngIf="user.photoURL; else avatarFallback" 
+                [src]="user.photoURL" 
+                [alt]="user.displayName || 'User'"
+                class="avatar-img">
+              <ng-template #avatarFallback>
+                <div class="avatar-fallback">
+                  {{ getInitials(user.displayName || user.email || 'User') }}
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-12 col-md">
+            <div class="profile-info">
+              <h1 class="profile-name">{{ user.displayName || 'User' }}</h1>
+              <p class="profile-email text-muted">{{ user.email }}</p>
+              <p class="profile-member-since text-muted">
+                <i class="fas fa-calendar-alt"></i>
+                Member since {{ formatDate(stats.memberSince) }}
+              </p>
+            </div>
+          </div>
+          <div class="col-12 col-md-auto">
+            <div class="profile-actions">
+              <button class="btn btn-outline-primary me-2" (click)="toggleEditProfile()">
+                <i class="fas fa-edit"></i> Edit Profile
+              </button>
+              <button class="btn btn-outline-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Stats -->
+      <div class="profile-stats mb-4">
+        <div class="row g-4">
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-download"></i>
+              </div>
+              <div class="stat-content">
+                <h3 class="stat-number">{{ stats.totalDownloads }}</h3>
+                <p class="stat-label">Downloads</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+              <div class="stat-content">
+                <h3 class="stat-number">{{ stats.totalFavorites }}</h3>
+                <p class="stat-label">Favorites</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="stat-content">
+                <h3 class="stat-number">{{ stats.totalReviews }}</h3>
+                <p class="stat-label">Reviews</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-content">
+                <h3 class="stat-number">{{ (stats.totalDownloads + stats.totalFavorites + stats.totalReviews) * 10 }}</h3>
+                <p class="stat-label">Points</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="profile-tabs mb-4">
+        <ul class="nav nav-pills nav-fill">
+          <li class="nav-item">
+            <button 
+              class="nav-link"
+              [class.active]="activeTab === 'profile'"
+              (click)="setActiveTab('profile')">
+              <i class="fas fa-user"></i> Profile
+            </button>
+          </li>
+          <li class="nav-item">
+            <button 
+              class="nav-link"
+              [class.active]="activeTab === 'favorites'"
+              (click)="setActiveTab('favorites')">
+              <i class="fas fa-heart"></i> Favorites
+              <span class="badge bg-primary ms-1">{{ stats.totalFavorites }}</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button 
+              class="nav-link"
+              [class.active]="activeTab === 'downloads'"
+              (click)="setActiveTab('downloads')">
+              <i class="fas fa-download"></i> Downloads
+              <span class="badge bg-primary ms-1">{{ stats.totalDownloads }}</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <button 
+              class="nav-link"
+              [class.active]="activeTab === 'settings'"
+              (click)="setActiveTab('settings')">
+              <i class="fas fa-cog"></i> Settings
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        
+        <!-- Profile Tab -->
+        <div *ngIf="activeTab === 'profile'" class="tab-pane">
+          <div class="profile-tab">
+            <div class="row">
+              <div class="col-12 col-lg-8">
+                <div class="profile-details-card">
+                  <h4 class="mb-4">Profile Information</h4>
+                  
+                  <div *ngIf="!editingProfile" class="profile-view">
+                    <div class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Display Name</label>
+                        <p class="profile-value">{{ user.displayName || 'Not set' }}</p>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <p class="profile-value">{{ user.email }}</p>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Account Type</label>
+                        <p class="profile-value">
+                          <span class="badge bg-success">Verified User</span>
+                        </p>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Last Login</label>
+                        <p class="profile-value">{{ getLastLoginDate() }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="editingProfile" class="profile-edit">
+                    <form (ngSubmit)="saveProfile()">
+                      <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                          <label class="form-label">Display Name</label>
+                          <input 
+                            type="text" 
+                            class="form-control"
+                            [(ngModel)]="profileForm.displayName"
+                            name="displayName"
+                            placeholder="Enter display name">
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <label class="form-label">Email Address</label>
+                          <input 
+                            type="email" 
+                            class="form-control"
+                            [(ngModel)]="profileForm.email"
+                            name="email"
+                            readonly>
+                        </div>
+                      </div>
+                      <div class="mt-4">
+                        <button type="submit" class="btn btn-primary me-2">
+                          <i class="fas fa-save"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="toggleEditProfile()">
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-4">
+                <div class="profile-activity-card">
+                  <h5 class="mb-3">Recent Activity</h5>
+                  <div class="activity-item">
+                    <i class="fas fa-download text-primary"></i>
+                    <span>Downloaded {{ stats.totalDownloads }} apps</span>
+                  </div>
+                  <div class="activity-item">
+                    <i class="fas fa-heart text-danger"></i>
+                    <span>Added {{ stats.totalFavorites }} favorites</span>
+                  </div>
+                  <div class="activity-item">
+                    <i class="fas fa-star text-warning"></i>
+                    <span>Wrote {{ stats.totalReviews }} reviews</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorites Tab -->
+        <div *ngIf="activeTab === 'favorites'" class="tab-pane">
+          <div class="favorites-tab">
+            
+            <!-- Loading -->
+            <div *ngIf="favoritesLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading favorites...</span>
+              </div>
+              <p class="mt-3 text-muted">Loading your favorite apps...</p>
+            </div>
+
+            <!-- Favorites Grid -->
+            <div *ngIf="!favoritesLoading && favoriteApps.length > 0" class="favorites-grid">
+              <div class="row g-4">
+                <div *ngFor="let app of favoriteApps" class="col-12 col-sm-6 col-md-4 col-lg-3">
+                  <div class="app-card" (click)="viewAppDetails(app.id!)">
+                    <div class="app-icon">
+                      <img [ngSrc]="app.iconThumbUrl || app.iconUrl" 
+                           [alt]="app.name" 
+                           class="img-fluid"
+                           width="80" 
+                           height="80"
+                           [placeholder]="app.iconThumbUrl || app.iconUrl">
+                    </div>
+                    <div class="app-info">
+                      <h6 class="app-name">{{ app.name }}</h6>
+                      <p class="app-publisher text-muted">{{ app.publisher }}</p>
+                      <div class="app-rating">
+                        <div class="stars">
+                          <i *ngFor="let star of getStarArray(app.rating)" 
+                             class="fas fa-star"
+                             [class.filled]="star === 1"></i>
+                        </div>
+                        <span class="rating-text">({{ app.reviewsCount }})</span>
+                      </div>
+                    </div>
+                    <div class="app-actions">
+                      <button class="btn btn-primary btn-sm me-2" (click)="downloadApp(app, $event)">
+                        <i class="fas fa-download"></i>
+                      </button>
+                      <button class="btn btn-outline-danger btn-sm" (click)="removeFromFavorites(app.id!)">
+                        <i class="fas fa-heart-broken"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- No Favorites -->
+            <div *ngIf="!favoritesLoading && favoriteApps.length === 0" class="no-favorites text-center py-5">
+              <i class="fas fa-heart fa-4x text-muted mb-3"></i>
+              <h4>No Favorite Apps</h4>
+              <p class="text-muted mb-4">You haven't added any apps to your favorites yet.</p>
+              <button class="btn btn-primary" routerLink="/">
+                <i class="fas fa-home"></i> Browse Apps
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Downloads Tab -->
+        <div *ngIf="activeTab === 'downloads'" class="tab-pane">
+          <div class="downloads-tab">
+            
+            <!-- Loading -->
+            <div *ngIf="downloadsLoading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading downloads...</span>
+              </div>
+              <p class="mt-3 text-muted">Loading your downloaded apps...</p>
+            </div>
+
+            <!-- Downloads List -->
+            <div *ngIf="!downloadsLoading && downloadedApps.length > 0" class="downloads-list">
+              <div *ngFor="let app of downloadedApps" class="download-item">
+                <div class="app-icon">
+                  <img [ngSrc]="app.iconThumbUrl || app.iconUrl" 
+                       [alt]="app.name" 
+                       class="img-fluid"
+                       width="60" 
+                       height="60"
+                       [placeholder]="app.iconThumbUrl || app.iconUrl">
+                </div>
+                <div class="app-info flex-grow-1">
+                  <h6 class="app-name">{{ app.name }}</h6>
+                  <p class="app-publisher text-muted">{{ app.publisher }}</p>
+                  <div class="app-meta">
+                    <span class="app-version text-muted me-3">v{{ app.version }}</span>
+                    <span class="app-size text-muted me-3">{{ app.size }}</span>
+                    <div class="app-rating">
+                      <div class="stars">
+                        <i *ngFor="let star of getStarArray(app.rating)" 
+                           class="fas fa-star"
+                           [class.filled]="star === 1"></i>
+                      </div>
+                      <span class="rating-text">({{ app.reviewsCount }})</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="app-actions">
+                  <button class="btn btn-outline-primary me-2" (click)="viewAppDetails(app.id!)">
+                    <i class="fas fa-info-circle"></i> Details
+                  </button>
+                  <button class="btn btn-primary" (click)="downloadApp(app, $event)">
+                    <i class="fas fa-download"></i> Download Again
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- No Downloads -->
+            <div *ngIf="!downloadsLoading && downloadedApps.length === 0" class="no-downloads text-center py-5">
+              <i class="fas fa-download fa-4x text-muted mb-3"></i>
+              <h4>No Downloaded Apps</h4>
+              <p class="text-muted mb-4">You haven't downloaded any apps yet.</p>
+              <button class="btn btn-primary" routerLink="/">
+                <i class="fas fa-home"></i> Browse Apps
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div *ngIf="activeTab === 'settings'" class="tab-pane">
+          <div class="settings-tab">
+            <div class="row">
+              <div class="col-12 col-lg-8">
+                <div class="settings-card">
+                  <h4 class="mb-4">Account Settings</h4>
+                  
+                  <div class="settings-section mb-4">
+                    <h6>Privacy & Security</h6>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="publicProfile" checked>
+                      <label class="form-check-label" for="publicProfile">
+                        Make my profile public
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                      <label class="form-check-label" for="emailNotifications">
+                        Receive email notifications
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="settings-section mb-4">
+                    <h6>Download Preferences</h6>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="autoUpdate" checked>
+                      <label class="form-check-label" for="autoUpdate">
+                        Auto-update downloaded apps
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="wifiOnly">
+                      <label class="form-check-label" for="wifiOnly">
+                        Download only on Wi-Fi
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="settings-section">
+                    <h6 class="text-danger">Danger Zone</h6>
+                    <button class="btn btn-outline-danger">
+                      <i class="fas fa-trash"></i> Delete Account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
