@@ -1,0 +1,85 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "start",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "(.*?)"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation complete"
+          }
+        }
+      }
+    },
+    {
+      "label": "android-build-debug",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["assembleDebug"],
+      "options": {
+        "cwd": "${workspaceFolder}/solidev_store_android"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "android-install",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["installDebug"],
+      "options": {
+        "cwd": "${workspaceFolder}/solidev_store_android"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "android-run",
+      "type": "shell",
+      "command": "./gradlew installDebug && adb shell am start -n com.solidev.store/.MainActivity",
+      "options": {
+        "cwd": "${workspaceFolder}/solidev_store_android"
+      },
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "android-clean",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": ["clean"],
+      "options": {
+        "cwd": "${workspaceFolder}/solidev_store_android"
+      },
+      "group": "build",
+      "problemMatcher": []
+    }
+  ]
+}

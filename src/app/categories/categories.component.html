@@ -1,0 +1,208 @@
+<app-header></app-header>
+
+<div class="categories-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading categories...</span>
+      </div>
+      <p class="mt-3 text-muted">Loading categories...</p>
+    </div>
+  </div>
+
+  <!-- Categories Grid View -->
+  <div *ngIf="!loading && !selectedCategory" class="categories-grid">
+    <div class="container py-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2 mb-0">Browse Categories</h1>
+        <div class="d-flex align-items-center gap-3">
+          <button class="btn btn-outline-primary btn-sm" (click)="refreshAppCounts()" title="Refresh app counts">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+          <button class="btn btn-outline-warning btn-sm" (click)="syncCategoryData()" title="Sync category-app data">
+            <i class="fas fa-link"></i> Sync
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="debugCategoriesData()" title="Debug categories data">
+            <i class="fas fa-bug"></i> Debug
+          </button>
+          <span class="badge bg-light text-dark">{{ categories.length }} categories</span>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div *ngFor="let category of categories" class="col-12 col-md-6 col-lg-4 col-xl-3">
+          <div class="category-card" (click)="selectCategory(category.id!)">
+            <div class="category-icon" [style.background-color]="category.color">
+              <i [class]="category.icon"></i>
+            </div>
+            <div class="category-info">
+              <h5 class="category-name">{{ category.name }}</h5>
+              <p class="category-description text-muted">{{ category.description || 'Discover amazing apps' }}</p>
+              <div class="category-stats">
+                <span class="app-count">{{ category.appCount || 0 }} apps</span>
+              </div>
+            </div>
+            <div class="category-arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Category Apps View -->
+  <div *ngIf="selectedCategory" class="category-apps">
+    <div class="container py-4">
+      <!-- Category Header -->
+      <div class="category-header mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <button class="btn btn-outline-secondary me-3" (click)="clearSelection()">
+            <i class="fas fa-arrow-left"></i> Back to Categories
+          </button>
+          <div class="category-title-section d-flex align-items-center">
+            <div class="category-icon-large me-3" [style.background-color]="selectedCategory.color">
+              <i [class]="selectedCategory.icon"></i>
+            </div>
+            <div>
+              <h1 class="h2 mb-1">{{ selectedCategory.name }}</h1>
+              <p class="text-muted mb-0">{{ selectedCategory.description || 'Explore apps in this category' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- View Controls -->
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="apps-count">
+            <span class="badge bg-primary">{{ categoryApps.length }} apps found</span>
+          </div>
+          <div class="view-controls">
+            <div class="btn-group" role="group">
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                [class.active]="viewMode === 'grid'"
+                (click)="viewMode = 'grid'">
+                <i class="fas fa-th"></i> Grid
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-outline-secondary"
+                [class.active]="viewMode === 'list'"
+                (click)="viewMode = 'list'">
+                <i class="fas fa-list"></i> List
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Apps -->
+      <div *ngIf="appsLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading apps...</span>
+        </div>
+        <p class="mt-3 text-muted">Loading {{ selectedCategory.name }} apps...</p>
+      </div>
+
+      <!-- Apps Grid View -->
+      <div *ngIf="!appsLoading && viewMode === 'grid'" class="apps-grid">
+        <div class="row g-4">
+          <div *ngFor="let app of categoryApps" class="col-12 col-sm-6 col-md-4 col-lg-3">
+            <div class="app-card" (click)="viewAppDetails(app.id!)">
+              <div class="app-icon">
+                <img [ngSrc]="app.iconThumbUrl || app.iconUrl" 
+                     [alt]="app.name" 
+                     class="img-fluid"
+                     width="80" 
+                     height="80"
+                     [placeholder]="app.iconThumbUrl || app.iconUrl">
+              </div>
+              <div class="app-info">
+                <h6 class="app-name">{{ app.name }}</h6>
+                <p class="app-publisher text-muted">{{ app.publisher }}</p>
+                <div class="app-rating">
+                  <div class="stars">
+                    <i *ngFor="let star of getStarArray(app.rating)" 
+                       class="fas fa-star"
+                       [class.filled]="star === 1"></i>
+                  </div>
+                  <span class="rating-text">({{ app.reviewsCount }})</span>
+                </div>
+                <div class="app-stats">
+                  <span class="downloads">{{ formatDownloadCount(app.downloads) }} downloads</span>
+                </div>
+              </div>
+              <div class="app-actions">
+                <button class="btn btn-primary btn-sm" (click)="downloadApp(app, $event)">
+                  <i class="fas fa-download"></i> Install
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Apps List View -->
+      <div *ngIf="!appsLoading && viewMode === 'list'" class="apps-list">
+        <div *ngFor="let app of categoryApps" class="app-list-item" (click)="viewAppDetails(app.id!)">
+          <div class="app-icon">
+            <img [ngSrc]="app.iconThumbUrl || app.iconUrl" 
+                 [alt]="app.name" 
+                 class="img-fluid"
+                 width="60" 
+                 height="60"
+                 [placeholder]="app.iconThumbUrl || app.iconUrl">
+          </div>
+          <div class="app-info flex-grow-1">
+            <h6 class="app-name mb-1">{{ app.name }}</h6>
+            <p class="app-publisher text-muted mb-1">{{ app.publisher }}</p>
+            <p class="app-description text-muted mb-2">{{ app.description | slice:0:100 }}{{ app.description.length > 100 ? '...' : '' }}</p>
+            <div class="app-meta d-flex align-items-center">
+              <div class="app-rating me-3">
+                <div class="stars">
+                  <i *ngFor="let star of getStarArray(app.rating)" 
+                     class="fas fa-star"
+                     [class.filled]="star === 1"></i>
+                </div>
+                <span class="rating-text">({{ app.reviewsCount }})</span>
+              </div>
+              <span class="downloads text-muted">{{ formatDownloadCount(app.downloads) }} downloads</span>
+            </div>
+          </div>
+          <div class="app-actions">
+            <div class="app-size text-muted mb-2">{{ app.size }}</div>
+            <button class="btn btn-primary" (click)="downloadApp(app, $event)">
+              <i class="fas fa-download"></i> Install
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Apps Found -->
+      <div *ngIf="!appsLoading && categoryApps.length === 0" class="no-apps text-center py-5">
+        <i class="fas fa-mobile-alt fa-4x text-muted mb-3"></i>
+        <h4>No Apps Found</h4>
+        <p class="text-muted">There are no apps available in the {{ selectedCategory.name }} category yet.</p>
+        <button class="btn btn-primary" (click)="clearSelection()">
+          Browse Other Categories
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Categories Found -->
+  <div *ngIf="!loading && categories.length === 0" class="no-categories text-center py-5">
+    <div class="container">
+      <i class="fas fa-th-large fa-4x text-muted mb-3"></i>
+      <h4>No Categories Available</h4>
+      <p class="text-muted">Categories are being updated. Let's populate them with initial data.</p>
+      <button class="btn btn-primary" (click)="populateCategories()">
+        <i class="fas fa-plus"></i> Create Initial Categories
+      </button>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

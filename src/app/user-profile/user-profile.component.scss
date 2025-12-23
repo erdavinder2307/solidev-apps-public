@@ -1,0 +1,540 @@
+.profile-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  padding-top: 80px; // Account for fixed header height
+}
+
+// Profile Header
+.profile-header {
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 20px;
+    position: relative;
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-fallback {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #007bff, #6610f2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .profile-info {
+    text-align: center;
+
+    .profile-name {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #212529;
+    }
+
+    .profile-email {
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .profile-member-since {
+      font-size: 0.9rem;
+
+      i {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  .profile-actions {
+    text-align: center;
+    margin-top: 20px;
+
+    .btn {
+      min-width: 120px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .profile-avatar {
+      margin: 0;
+    }
+
+    .profile-info {
+      text-align: left;
+    }
+
+    .profile-actions {
+      text-align: right;
+      margin-top: 0;
+    }
+  }
+}
+
+// Profile Stats
+.profile-stats {
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #007bff, #6610f2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: white;
+      font-size: 24px;
+    }
+
+    .stat-content {
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #212529;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Profile Tabs
+.profile-tabs {
+  .nav-pills {
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .nav-link {
+      border-radius: 8px;
+      color: #6c757d;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      &:hover {
+        background-color: #f8f9fa;
+        color: #007bff;
+      }
+
+      &.active {
+        background-color: #007bff;
+        color: white;
+      }
+
+      i {
+        font-size: 0.9rem;
+      }
+
+      .badge {
+        font-size: 0.7rem;
+      }
+    }
+  }
+}
+
+// Tab Content
+.tab-content {
+  // Profile Tab
+  .profile-tab {
+    .profile-details-card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      height: fit-content;
+
+      h4 {
+        color: #212529;
+        font-weight: 600;
+      }
+
+      .profile-view {
+        .form-label {
+          font-weight: 600;
+          color: #495057;
+          margin-bottom: 8px;
+        }
+
+        .profile-value {
+          background: #f8f9fa;
+          padding: 12px 16px;
+          border-radius: 8px;
+          margin-bottom: 16px;
+          color: #212529;
+
+          .badge {
+            font-size: 0.8rem;
+          }
+        }
+      }
+
+      .profile-edit {
+        .form-control {
+          border-color: #dee2e6;
+
+          &:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+          }
+        }
+      }
+    }
+
+    .profile-activity-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      height: fit-content;
+
+      h5 {
+        color: #212529;
+        font-weight: 600;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f3f4;
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        i {
+          width: 24px;
+          text-align: center;
+        }
+
+        span {
+          color: #495057;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  // Favorites Tab
+  .favorites-tab {
+    .favorites-grid {
+      .app-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        height: 100%;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .app-icon {
+          width: 64px;
+          height: 64px;
+          margin: 0 auto 16px;
+          border-radius: 12px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .app-info {
+          text-align: center;
+          margin-bottom: 16px;
+
+          .app-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #212529;
+          }
+
+          .app-publisher {
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+          }
+
+          .app-rating {
+            .stars {
+              display: inline-flex;
+              gap: 2px;
+              margin-right: 8px;
+
+              .fa-star {
+                color: #dee2e6;
+                font-size: 0.8rem;
+
+                &.filled {
+                  color: #ffc107;
+                }
+              }
+            }
+
+            .rating-text {
+              font-size: 0.8rem;
+              color: #6c757d;
+            }
+          }
+        }
+
+        .app-actions {
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  // Downloads Tab
+  .downloads-tab {
+    .downloads-list {
+      .download-item {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .app-icon {
+          width: 64px;
+          height: 64px;
+          border-radius: 12px;
+          overflow: hidden;
+          flex-shrink: 0;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .app-info {
+          .app-name {
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 4px;
+          }
+
+          .app-publisher {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+          }
+
+          .app-meta {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+
+            .app-version, .app-size {
+              font-size: 0.8rem;
+            }
+
+            .app-rating {
+              .stars {
+                display: inline-flex;
+                gap: 2px;
+                margin-right: 8px;
+
+                .fa-star {
+                  color: #dee2e6;
+                  font-size: 0.8rem;
+
+                  &.filled {
+                    color: #ffc107;
+                  }
+                }
+              }
+
+              .rating-text {
+                font-size: 0.8rem;
+                color: #6c757d;
+              }
+            }
+          }
+        }
+
+        .app-actions {
+          flex-shrink: 0;
+        }
+      }
+    }
+  }
+
+  // Settings Tab
+  .settings-tab {
+    .settings-card {
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      h4 {
+        color: #212529;
+        font-weight: 600;
+      }
+
+      .settings-section {
+        h6 {
+          color: #495057;
+          font-weight: 600;
+          margin-bottom: 16px;
+
+          &.text-danger {
+            color: #dc3545 !important;
+          }
+        }
+
+        .form-check {
+          margin-bottom: 12px;
+
+          .form-check-label {
+            color: #495057;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Empty States
+.no-favorites, .no-downloads {
+  background: white;
+  border-radius: 12px;
+  padding: 40px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  .fa-4x {
+    opacity: 0.5;
+  }
+}
+
+// Loading States
+.loading-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 24px 20px;
+    text-align: center;
+
+    .profile-actions {
+      margin-top: 20px;
+
+      .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 8px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .downloads-tab {
+    .downloads-list {
+      .download-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+
+        .app-info {
+          .app-meta {
+            justify-content: center;
+          }
+        }
+
+        .app-actions {
+          width: 100%;
+
+          .btn {
+            width: 100%;
+            margin-bottom: 8px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-stats {
+    .row {
+      --bs-gutter-x: 1rem;
+    }
+  }
+
+  .favorites-tab {
+    .favorites-grid {
+      .row {
+        --bs-gutter-x: 1rem;
+      }
+    }
+  }
+}

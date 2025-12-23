@@ -1,0 +1,262 @@
+.apps-list-container {
+  padding: 0;
+  max-width: 100%;
+}
+
+.header-section {
+  .page-title h2 {
+    color: #2d3748;
+    font-weight: 700;
+  }
+  
+  .add-app-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .add-app-btn:hover {
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+  }
+}
+
+.stats-section {
+  .stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    height: 100%;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 16px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+    line-height: 1;
+  }
+  
+  .stat-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin: 0;
+    margin-top: 4px;
+  }
+}
+
+.table-container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.table-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid #e2e8f0;
+  
+  h5 {
+    color: #2d3748;
+  }
+}
+
+.apps-table {
+  .mat-mdc-header-cell {
+    background: transparent;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 24px;
+  }
+  
+  .mat-mdc-cell {
+    border-bottom: 1px solid #f1f5f9;
+    padding: 20px 24px;
+    font-size: 0.9rem;
+  }
+  
+  .table-row {
+    transition: all 0.2s ease;
+  }
+  
+  .table-row:hover {
+    background: #f8fafc;
+  }
+}
+
+.app-info {
+  .app-icon-wrapper {
+    position: relative;
+  }
+  
+  .app-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    border: 2px solid #f1f5f9;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .app-name {
+    color: #2d3748;
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+}
+
+.downloads-info {
+  .fw-semibold {
+    color: #2d3748;
+    font-size: 1rem;
+  }
+  
+  small {
+    font-size: 0.8rem;
+  }
+}
+
+.rating-display {
+  .bi-star-fill {
+    font-size: 1rem;
+  }
+  
+  .fw-semibold {
+    color: #2d3748;
+    font-size: 1rem;
+  }
+}
+
+.actions-group {
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    
+    &.edit-btn {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.1);
+    }
+    
+    &.edit-btn:hover {
+      background: rgba(102, 126, 234, 0.2);
+      transform: scale(1.05);
+    }
+    
+    &.view-btn {
+      color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+    }
+    
+    &.view-btn:hover {
+      background: rgba(34, 197, 94, 0.2);
+      transform: scale(1.05);
+    }
+    
+    &.delete-btn {
+      color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+    
+    &.delete-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      transform: scale(1.05);
+    }
+  }
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  font-weight: 600;
+}
+
+.empty-state {
+  padding: 80px 20px;
+  
+  .empty-icon {
+    opacity: 0.4;
+  }
+  
+  h4 {
+    margin-bottom: 8px;
+  }
+  
+  p {
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-section {
+    .d-flex {
+      flex-direction: column;
+      gap: 16px;
+      align-items: stretch !important;
+    }
+    
+    .add-app-btn {
+      width: 100%;
+    }
+  }
+  
+  .stats-section .row {
+    gap: 12px;
+  }
+  
+  .apps-table {
+    .mat-mdc-header-cell,
+    .mat-mdc-cell {
+      padding: 12px 16px;
+    }
+  }
+  
+  .app-info {
+    .app-icon {
+      width: 48px;
+      height: 48px;
+    }
+    
+    .app-name {
+      font-size: 0.9rem;
+    }
+  }
+  
+  .actions-group {
+    .action-btn {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}

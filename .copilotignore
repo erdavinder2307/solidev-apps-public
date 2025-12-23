@@ -1,0 +1,95 @@
+# GitHub Copilot Ignore File
+# This file tells Copilot which files to exclude from context to reduce premium request usage
+
+# ============================================================================
+# DOCUMENTATION FILES (High Token Cost)
+# ============================================================================
+# Exclude all markdown documentation files - they're for human reference only
+*.md
+!README.md
+# Allow README.md but exclude detailed documentation
+COPILOT_OPTIMIZATION.md
+ANDROID_APK_BUILD_SUMMARY.md
+ANDROID_APP_INSTALLATION.md
+APK_INSTALLATION_ERROR_FIX.md
+AZURE_EMAIL_SETUP.md
+EMAIL_IMPLEMENTATION_SUMMARY.md
+FEATURED_APPS_README.md
+IMAGE_CACHING_README.md
+INSTALLATION_SUCCESS.md
+LOGO_VISIBILITY_IMPROVEMENTS.md
+MOBILE_UX_IMPROVEMENTS.md
+NGSRC_IMPLEMENTATION.md
+PWA_IMPLEMENTATION_SUMMARY.md
+REVIEW_SYSTEM_README.md
+
+# ============================================================================
+# BUILD OUTPUTS & GENERATED FILES
+# ============================================================================
+# These are generated and not needed for coding assistance
+/dist/
+/dist-server/
+/coverage/
+*.apk
+*.aab
+/bazel-out/
+/.angular/cache/
+
+# Android Build Outputs
+/solidev_store_android/app/build/
+/solidev_store_android/build/
+/solidev_store_android/.gradle/
+/solidev_store_android/app/.cxx/
+/solidev_store_android/local.properties
+/solidev_store_android/app/google-services.json
+
+# ============================================================================
+# DEPENDENCIES (Very High Token Cost)
+# ============================================================================
+# Never include dependencies - they're huge and rarely needed
+/node_modules/
+/solidev_store_android/gradle/
+
+# ============================================================================
+# LARGE DATA & ASSETS
+# ============================================================================
+# Exclude large asset files that don't need code intelligence
+/public/icons/
+/src/assets/images/
+/src/assets/decidematepro/
+/src/assets/solidcare/
+/solidev_store_android/assets/
+
+# ============================================================================
+# TEST & COVERAGE REPORTS
+# ============================================================================
+# Generated reports don't need to be in context
+/coverage/
+*.coverage
+.nyc_output/
+
+# ============================================================================
+# CONFIGURATION FILES (Selective)
+# ============================================================================
+# Exclude configs that don't change often
+ngsw-config.json
+staticwebapp.config.json
+
+# ============================================================================
+# VERSION CONTROL & IDE
+# ============================================================================
+.git/
+.github/
+.vscode/
+.idea/
+*.log
+*.lock
+
+# ============================================================================
+# TEMPORARY & CACHE FILES
+# ============================================================================
+*.tmp
+*.temp
+*.cache
+.DS_Store
+Thumbs.db

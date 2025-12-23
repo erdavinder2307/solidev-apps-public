@@ -1,0 +1,170 @@
+<!-- Modern App Store Footer -->
+<footer class="footer bg-dark text-light mt-5">
+  <!-- Main Footer Content -->
+  <div class="container py-5">
+    <div class="row g-4">
+      <!-- Brand & Description -->
+      <div class="col-lg-4 col-md-6">
+        <div class="footer-brand mb-4">
+          <img [ngSrc]="'../../assets/images/logo.png'" 
+               alt="Solidev Store" 
+               class="footer-logo mb-3"
+               width="60" 
+               height="60"
+               placeholder="../../assets/images/logo.png">
+          <h5 class="text-primary fw-bold">Solidev Store</h5>
+          <p class="text-muted mb-4">
+            Discover, download, and enjoy the best apps and games. Your trusted source for quality mobile applications.
+          </p>
+          <!-- Social Media Links -->
+          <div class="social-links d-flex gap-3">
+            <a href="#" class="social-link" title="Facebook" (click)="showSocial('facebook', $event)">
+              <i class="bi bi-facebook"></i>
+            </a>
+            <a href="#" class="social-link" title="Twitter" (click)="showSocial('twitter', $event)">
+              <i class="bi bi-twitter"></i>
+            </a>
+            <a href="#" class="social-link" title="Instagram" (click)="showSocial('instagram', $event)">
+              <i class="bi bi-instagram"></i>
+            </a>
+            <a href="#" class="social-link" title="LinkedIn" (click)="showSocial('linkedin', $event)">
+              <i class="bi bi-linkedin"></i>
+            </a>
+            <a href="#" class="social-link" title="YouTube" (click)="showSocial('youtube', $event)">
+              <i class="bi bi-youtube"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <h6 class="footer-title mb-3">Explore</h6>
+        <ul class="footer-links list-unstyled">
+          <li><a href="#" class="footer-link" (click)="showTopApps($event)">Top Apps</a></li>
+          <li><a href="#" class="footer-link" (click)="showNewReleases($event)">New Releases</a></li>
+          <li><a href="#" class="footer-link" (click)="showCategories($event)">Categories</a></li>
+          <li><a href="#" class="footer-link" (click)="showTopGames($event)">Top Games</a></li>
+          <li><a href="#" class="footer-link" (click)="showEditorsChoice($event)">Editor's Choice</a></li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <h6 class="footer-title mb-3">Categories</h6>
+        <ul class="footer-links list-unstyled">
+          <li><a routerLink="/categories/games" class="footer-link">Games</a></li>
+          <li><a routerLink="/categories/entertainment" class="footer-link">Entertainment</a></li>
+          <li><a routerLink="/categories/productivity" class="footer-link">Productivity</a></li>
+          <li><a routerLink="/categories/education" class="footer-link">Education</a></li>
+          <li><a routerLink="/categories/health" class="footer-link">Health & Fitness</a></li>
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <h6 class="footer-title mb-3">Support</h6>
+        <ul class="footer-links list-unstyled">
+          <li><a routerLink="/about" class="footer-link">About Us</a></li>
+          <li><a href="#" class="footer-link" (click)="showHelpCenter($event)">Help Center</a></li>
+          <li><a href="#" class="footer-link" (click)="showContact($event)">Contact Us</a></li>
+          <li><a href="#" class="footer-link" (click)="showReportApp($event)">Report App</a></li>
+          <li><a href="#" class="footer-link" (click)="showFeedback($event)">Feedback</a></li>
+          <li><a href="#" class="footer-link" (click)="showReportApp($event)">Bug Report</a></li>
+        </ul>
+      </div>
+
+      <!-- Developer Resources -->
+      <div class="col-lg-2 col-md-6 col-sm-6" *ngIf="isAdmin">
+        <h6 class="footer-title mb-3">Developers</h6>
+        <ul class="footer-links list-unstyled">
+          <li><a routerLink="/developer-dashboard" class="footer-link">Developer Console</a></li>
+          <li><a href="#" class="footer-link" (click)="showPublishingGuide($event)">Publishing Guide</a></li>
+          <li><a href="#" class="footer-link" (click)="showAPIDocumentation($event)">API Documentation</a></li>
+          <li><a href="#" class="footer-link" (click)="showAppReview($event)">App Review</a></li>
+          <li><a href="#" class="footer-link" (click)="showAnalytics($event)">Analytics</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Newsletter Subscription -->
+    <div class="row mt-5">
+      <div class="col-lg-8 mx-auto text-center">
+        <div class="newsletter-section">
+          <h5 class="mb-3 text-white">Stay Updated</h5>
+          <p class="text-light mb-4">Subscribe to our newsletter for the latest app releases and updates.</p>
+          <form class="newsletter-form d-flex justify-content-center" (ngSubmit)="subscribeNewsletter()" #newsletterForm="ngForm">
+            <div class="input-group" style="max-width: 400px;">
+              <input type="email" 
+                     class="form-control newsletter-input" 
+                     placeholder="Enter your email"
+                     [(ngModel)]="newsletterEmail"
+                     name="newsletterEmail"
+                     required
+                     email
+                     [disabled]="isSubscribing"
+                     #emailInput="ngModel">
+              <button class="btn btn-primary newsletter-btn" 
+                      type="submit" 
+                      [disabled]="!newsletterForm.valid || isSubscribing">
+                <span *ngIf="!isSubscribing">
+                  <i class="bi bi-send me-1"></i>Subscribe
+                </span>
+                <span *ngIf="isSubscribing">
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Subscribing...
+                </span>
+              </button>
+            </div>
+          </form>
+          <!-- Email validation error -->
+          <div *ngIf="emailInput.invalid && emailInput.touched" class="text-danger mt-2">
+            <small *ngIf="emailInput.errors?.['required']">Email is required</small>
+            <small *ngIf="emailInput.errors?.['email']">Please enter a valid email address</small>
+          </div>
+          <small class="text-light mt-2 d-block opacity-75">We respect your privacy. Unsubscribe at any time.</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- App Download Badges -->
+    <div class="row mt-5">
+      <div class="col-12 text-center">
+        <h6 class="mb-4">Download Our App</h6>
+        <div class="download-badges d-flex justify-content-center gap-3 flex-wrap">
+          <a [href]="storeApkUrl || 'https://firebasestorage.googleapis.com/v0/b/solidev-apps.firebasestorage.app/o/apps%2Fsolidev-store.apk?alt=media&token=e68e9ecc-35ca-4640-adf8-338a4b5bd087'" 
+             class="download-badge" 
+             download
+             title="Download Android APK">
+            <img [ngSrc]="'https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png'" 
+                 alt="Get it on Google Play" 
+                 class="badge-img"
+                 width="135" 
+                 height="40"
+                 placeholder="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png">
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Footer -->
+  <div class="footer-bottom border-top border-secondary">
+    <div class="container py-4">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-8 mb-3 mb-lg-0">
+          <p class="mb-0 text-muted">
+            &copy; {{ currentYear }} Solidev Store. All rights reserved.
+          </p>
+        </div>
+        <div class="col-lg-6 col-md-4 text-lg-end">
+          <div class="footer-legal-links d-flex flex-wrap justify-content-lg-end justify-content-start gap-3">
+            <a href="#" class="footer-legal-link" (click)="showPrivacyPolicy('footer', $event)">Privacy Policy</a>
+            <a href="#" class="footer-legal-link" (click)="showTermsOfService($event)">Terms of Service</a>
+            <a href="#" class="footer-legal-link" (click)="showCookiePolicy($event)">Cookie Policy</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,179 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- App Logo and Title -->
+    <div class="app-header">
+      <img [ngSrc]="'assets/images/logo.png'" 
+           alt="Solidev Store" 
+           class="app-logo"
+           width="80" 
+           height="80"
+           placeholder="assets/images/logo.png"
+           priority>
+      <h1 class="app-title">Solidev Store</h1>
+      <p class="app-subtitle">Discover amazing apps for your needs</p>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="mode-toggle">
+      <button 
+        class="toggle-btn" 
+        [class.active]="isLoginMode" 
+        (click)="isLoginMode = true">
+        Login
+      </button>
+      <button 
+        class="toggle-btn" 
+        [class.active]="!isLoginMode" 
+        (click)="isLoginMode = false">
+        Sign Up
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <form *ngIf="isLoginMode" [formGroup]="loginForm" (ngSubmit)="onLogin()" class="auth-form">
+      <h2 class="form-title">Welcome Back!</h2>
+      <p class="form-subtitle">Please sign in to your account</p>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="Enter your email">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter your password">
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+
+      <div class="form-options">
+        <mat-checkbox formControlName="rememberMe" color="primary">
+          Remember me
+        </mat-checkbox>
+        <a href="#" (click)="handleForgotPassword($event)" class="forgot-password">Forgot password?</a>
+      </div>
+
+      <button mat-raised-button color="primary" type="submit" class="auth-button" [disabled]="loginForm.invalid || loading">
+        <mat-icon *ngIf="loading">sync</mat-icon>
+        {{ loading ? 'Signing in...' : 'Sign In' }}
+      </button>
+
+      <mat-divider class="divider">
+        <span class="divider-text">or continue with</span>
+      </mat-divider>
+
+      <div class="social-buttons">
+        <button mat-raised-button class="social-btn google-btn" (click)="signInWithGoogle()" type="button" [disabled]="loading">
+          <mat-icon svgIcon="google"></mat-icon>
+          Google
+        </button>
+      </div>
+    </form>
+
+    <!-- Signup Form -->
+    <form *ngIf="!isLoginMode" [formGroup]="signupForm" (ngSubmit)="onSignup()" class="auth-form">
+      <h2 class="form-title">Create Account</h2>
+      <p class="form-subtitle">Join us to discover amazing apps</p>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Full Name</mat-label>
+        <input matInput type="text" formControlName="fullName" placeholder="Enter your full name">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error *ngIf="signupForm.get('fullName')?.hasError('required')">
+          Full name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <input matInput type="email" formControlName="email" placeholder="Enter your email">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="signupForm.get('email')?.hasError('email')">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Create a password">
+        <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" type="button">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Confirm Password</mat-label>
+        <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm your password">
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('required')">
+          Please confirm your password
+        </mat-error>
+        <mat-error *ngIf="signupForm.hasError('passwordMismatch')">
+          Passwords do not match
+        </mat-error>
+      </mat-form-field>
+
+      <mat-checkbox formControlName="agreeTerms" color="primary" class="terms-checkbox">
+        I agree to the <a href="#" (click)="navigateToTerms($event)" class="terms-link">Terms of Service</a> and <a href="#" (click)="navigateToPrivacy($event)" class="terms-link">Privacy Policy</a>
+      </mat-checkbox>
+
+      <button mat-raised-button color="primary" type="submit" class="auth-button" [disabled]="signupForm.invalid || loading">
+        <mat-icon *ngIf="loading">sync</mat-icon>
+        {{ loading ? 'Creating Account...' : 'Create Account' }}
+      </button>
+
+      <mat-divider class="divider">
+        <span class="divider-text">or sign up with</span>
+      </mat-divider>
+
+      <div class="social-buttons">
+        <button mat-raised-button class="social-btn google-btn" (click)="signInWithGoogle()" type="button" [disabled]="loading">
+          <mat-icon svgIcon="google"></mat-icon>
+          Google
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="auth-footer">
+      <p *ngIf="isLoginMode">
+        Don't have an account? 
+        <button class="link-button" (click)="toggleMode()">Sign up here</button>
+      </p>
+      <p *ngIf="!isLoginMode">
+        Already have an account? 
+        <button class="link-button" (click)="toggleMode()">Sign in here</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- Background Elements -->
+  <div class="background-elements">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+</div>
